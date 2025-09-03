@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Earning Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --background: linear-gradient(135deg, #6366f1, #3b82f6);
+      --card-bg: rgba(255, 255, 255, 0.15);
+      --border: rgba(255, 255, 255, 0.2);
+      --text: #ffffff;
+      --text-light: #e0e7ff;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background);
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      color: var(--text);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+
+    .form-row label {
+      flex: 1;
+      font-weight: 500;
+      color: var(--text-light);
+      margin-right: 10px;
+      white-space: nowrap;
+    }
+
+    .form-row input {
+      flex: 1.2;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-row input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 6px var(--primary);
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .results h2 {
+      margin: 0 0 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin: 12px 0 6px;
+      color: var(--text-light);
+      border-left: 4px solid var(--primary);
+      padding-left: 8px;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .total {
+      font-weight: bold;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-top: 14px;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Earning Calculator</h1>
+
+    <div class="card">
+      <div class="form-row">
+        <label for="cycles">Cycles</label>
+        <input type="number" id="cycles" value="1" min="1">
+      </div>
+      <div class="form-row">
+        <label for="initiator">Initiator</label>
+        <input type="number" id="initiator" value="0" min="0">
+      </div>
+      <div class="form-row">
+        <label for="l1">Level 1</label>
+        <input type="number" id="l1" value="0" min="0">
+      </div>
+      <div class="form-row">
+        <label for="l2">Level 2</label>
+        <input type="number" id="l2" value="0" min="0">
+      </div>
+      <div class="form-row">
+        <label for="l3">Level 3</label>
+        <input type="number" id="l3" value="0" min="0">
+      </div>
+    </div>
+
+    <div class="card results" id="results"></div>
+  </div>
+
+  <script>
+    const roiRate = 0.24; // 24% per cycle
+
+    function compoundedFinal(principal, cycles) {
+      return principal * Math.pow(1 + roiRate, cycles);
+    }
+
+    function calculate() {
+      const cycles = Number(document.getElementById("cycles").value);
+      const initiator = Number(document.getElementById("initiator").value);
+      const l1 = Number(document.getElementById("l1").value);
+      const l2 = Number(document.getElementById("l2").value);
+      const l3 = Number(document.getElementById("l3").value);
+
+      // Final values
+      const initiatorFinal = compoundedFinal(initiator, cycles);
+      const l1Final = compoundedFinal(l1, cycles);
+      const l2Final = compoundedFinal(l2, cycles);
+      const l3Final = compoundedFinal(l3, cycles);
+
+      // Own ROI (just profit)
+      const initiatorOwn = initiatorFinal - initiator;
+      const l1Own = l1Final - l1;
+      const l2Own = l2Final - l2;
+      const l3Own = l3Final - l3;
+
+      // Referrals (apply percentages to profits, not principals)
+      const initiatorReferral = 0.2 * l1Own + 0.1 * l2Own + 0.05 * l3Own;
+      const l1Referral = 0.2 * l2Own + 0.1 * l3Own;
+      const l2Referral = 0.2 * l3Own;
+      const l3Referral = 0;
+
+      // Totals (principal + own profit + referral)
+      const initiatorTotal = initiatorFinal + initiatorReferral;
+      const l1Total = l1Final + l1Referral;
+      const l2Total = l2Final + l2Referral;
+      const l3Total = l3Final + l3Referral;
+
+      const networkTotal = initiatorTotal + l1Total + l2Total + l3Total;
+
+      document.getElementById("results").innerHTML = `
+        <h2>Results</h2>
+
+        <div class="section-title">Initiator</div>
+        <div class="result-row"><span>Final Value</span><span>${initiatorFinal.toFixed(2)}</span></div>
+        <div class="result-row"><span>Own Profit</span><span>${initiatorOwn.toFixed(2)}</span></div>
+        <div class="result-row"><span>Referral</span><span>${initiatorReferral.toFixed(2)}</span></div>
+        <div class="result-row"><span>Total</span><span>${initiatorTotal.toFixed(2)}</span></div>
+
+        <div class="section-title">Level 1</div>
+        <div class="result-row"><span>Final Value</span><span>${l1Final.toFixed(2)}</span></div>
+        <div class="result-row"><span>Own Profit</span><span>${l1Own.toFixed(2)}</span></div>
+        <div class="result-row"><span>Referral</span><span>${l1Referral.toFixed(2)}</span></div>
+        <div class="result-row"><span>Total</span><span>${l1Total.toFixed(2)}</span></div>
+
+        <div class="section-title">Level 2</div>
+        <div class="result-row"><span>Final Value</span><span>${l2Final.toFixed(2)}</span></div>
+        <div class="result-row"><span>Own Profit</span><span>${l2Own.toFixed(2)}</span></div>
+        <div class="result-row"><span>Referral</span><span>${l2Referral.toFixed(2)}</span></div>
+        <div class="result-row"><span>Total</span><span>${l2Total.toFixed(2)}</span></div>
+
+        <div class="section-title">Level 3</div>
+        <div class="result-row"><span>Final Value</span><span>${l3Final.toFixed(2)}</span></div>
+        <div class="result-row"><span>Own Profit</span><span>${l3Own.toFixed(2)}</span></div>
+        <div class="result-row"><span>Referral</span><span>${l3Referral.toFixed(2)}</span></div>
+        <div class="result-row"><span>Total</span><span>${l3Total.toFixed(2)}</span></div>
+
+        <div class="total">Network Total: ${networkTotal.toFixed(2)}</div>
+      `;
+    }
+
+    document.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", calculate);
+    });
+
+    calculate();
+  </script>
+</body>
+</html>
