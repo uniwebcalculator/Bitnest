@@ -4,120 +4,118 @@
   <meta charset="UTF-8">
   <title>Earning Calculator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4f46e5;
-      --background: linear-gradient(135deg, #6366f1, #3b82f6);
-      --card-bg: rgba(255, 255, 255, 0.15);
-      --border: rgba(255, 255, 255, 0.2);
-      --text: #ffffff;
-      --text-light: #e0e7ff;
+      --primary: #2563eb; /* modern blue */
+      --accent: #06b6d4;  /* cyan accent */
+      --bg: #f9fafb;
+      --text: #111827;
+      --text-light: #374151;
+      --border: #e5e7eb;
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--background);
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
       color: var(--text);
+      margin: 0;
+      padding: 16px;
     }
 
     .container {
-      width: 100%;
-      max-width: 500px;
+      max-width: 900px;
+      margin: auto;
     }
 
     h1 {
       text-align: center;
-      font-size: 1.6rem;
-      margin-bottom: 20px;
+      font-size: 1.4rem;
       font-weight: 600;
-      color: white;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      margin-bottom: 16px;
+      color: var(--primary);
     }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      backdrop-filter: blur(10px);
-      padding: 18px;
+    .form-grid {
+      display: grid;
+      gap: 8px;
       margin-bottom: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     }
 
     .form-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
-      font-size: 0.9rem;
     }
 
     .form-row label {
-      flex: 1;
+      font-size: 0.85rem;
       font-weight: 500;
       color: var(--text-light);
-      margin-right: 10px;
-      white-space: nowrap;
+      margin-right: 8px;
+      flex: 1;
     }
 
     .form-row input {
       flex: 1.2;
-      padding: 8px;
-      border-radius: 10px;
+      padding: 6px 8px;
       border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.2);
-      color: var(--text);
-      font-size: 0.9rem;
-      outline: none;
-      transition: all 0.2s;
+      border-radius: 6px;
+      font-size: 0.85rem;
     }
 
-    .form-row input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 6px var(--primary);
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .results h2 {
-      margin: 0 0 12px;
-      font-size: 1.2rem;
+    .results h2, .cycle h2 {
+      font-size: 1rem;
       font-weight: 600;
-      color: white;
+      margin: 12px 0 8px;
+      color: var(--primary);
     }
 
     .section-title {
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      margin: 12px 0 6px;
+      margin: 10px 0 4px;
       color: var(--text-light);
-      border-left: 4px solid var(--primary);
-      padding-left: 8px;
+      border-left: 3px solid var(--accent);
+      padding-left: 6px;
     }
 
     .result-row {
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
-      font-size: 0.9rem;
-      border-bottom: 1px solid rgba(255,255,255,0.15);
-    }
-    .result-row:last-child {
-      border-bottom: none;
+      font-size: 0.8rem;
+      padding: 2px 0;
     }
 
     .total {
-      font-weight: bold;
-      font-size: 1.1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
       text-align: center;
-      margin-top: 14px;
-      color: white;
+      margin-top: 12px;
+      color: var(--primary);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 4px;
+      text-align: right;
+    }
+    th {
+      background: #f3f4f6;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+    td:first-child, th:first-child {
+      text-align: center;
+    }
+    tr:nth-child(even) {
+      background: #f9fafb;
     }
   </style>
 </head>
@@ -125,7 +123,7 @@
   <div class="container">
     <h1>Earning Calculator</h1>
 
-    <div class="card">
+    <div class="form-grid">
       <div class="form-row">
         <label for="cycles">Cycles</label>
         <input type="number" id="cycles" value="1" min="1">
@@ -148,13 +146,14 @@
       </div>
     </div>
 
-    <div class="card results" id="results"></div>
+    <div class="results" id="results"></div>
+    <div class="cycle" id="cycleTable"></div>
   </div>
 
   <script>
-    const roiRate = 0.24; // 24% per cycle
+    const roiRate = 0.24;
 
-    function compoundedFinal(principal, cycles) {
+    function compounded(principal, cycles) {
       return principal * Math.pow(1 + roiRate, cycles);
     }
 
@@ -165,67 +164,88 @@
       const l2 = Number(document.getElementById("l2").value);
       const l3 = Number(document.getElementById("l3").value);
 
-      // Final values
-      const initiatorFinal = compoundedFinal(initiator, cycles);
-      const l1Final = compoundedFinal(l1, cycles);
-      const l2Final = compoundedFinal(l2, cycles);
-      const l3Final = compoundedFinal(l3, cycles);
+      const initiatorFinal = compounded(initiator, cycles);
+      const l1Final = compounded(l1, cycles);
+      const l2Final = compounded(l2, cycles);
+      const l3Final = compounded(l3, cycles);
 
-      // Own ROI (just profit)
       const initiatorOwn = initiatorFinal - initiator;
       const l1Own = l1Final - l1;
       const l2Own = l2Final - l2;
       const l3Own = l3Final - l3;
 
-      // Referrals (apply percentages to profits, not principals)
-      const initiatorReferral = 0.2 * l1Own + 0.1 * l2Own + 0.05 * l3Own;
-      const l1Referral = 0.2 * l2Own + 0.1 * l3Own;
-      const l2Referral = 0.2 * l3Own;
+      const initiatorReferral = 0.2*l1Own + 0.1*l2Own + 0.05*l3Own;
+      const l1Referral = 0.2*l2Own + 0.1*l3Own;
+      const l2Referral = 0.2*l3Own;
       const l3Referral = 0;
 
-      // Totals (principal + own profit + referral)
       const initiatorTotal = initiatorFinal + initiatorReferral;
       const l1Total = l1Final + l1Referral;
       const l2Total = l2Final + l2Referral;
       const l3Total = l3Final + l3Referral;
-
       const networkTotal = initiatorTotal + l1Total + l2Total + l3Total;
 
       document.getElementById("results").innerHTML = `
-        <h2>Results</h2>
-
+        <h2>Summary</h2>
         <div class="section-title">Initiator</div>
         <div class="result-row"><span>Final Value</span><span>${initiatorFinal.toFixed(2)}</span></div>
-        <div class="result-row"><span>Own Profit</span><span>${initiatorOwn.toFixed(2)}</span></div>
+        <div class="result-row"><span>Profit</span><span>${initiatorOwn.toFixed(2)}</span></div>
         <div class="result-row"><span>Referral</span><span>${initiatorReferral.toFixed(2)}</span></div>
         <div class="result-row"><span>Total</span><span>${initiatorTotal.toFixed(2)}</span></div>
 
         <div class="section-title">Level 1</div>
         <div class="result-row"><span>Final Value</span><span>${l1Final.toFixed(2)}</span></div>
-        <div class="result-row"><span>Own Profit</span><span>${l1Own.toFixed(2)}</span></div>
+        <div class="result-row"><span>Profit</span><span>${l1Own.toFixed(2)}</span></div>
         <div class="result-row"><span>Referral</span><span>${l1Referral.toFixed(2)}</span></div>
         <div class="result-row"><span>Total</span><span>${l1Total.toFixed(2)}</span></div>
 
         <div class="section-title">Level 2</div>
         <div class="result-row"><span>Final Value</span><span>${l2Final.toFixed(2)}</span></div>
-        <div class="result-row"><span>Own Profit</span><span>${l2Own.toFixed(2)}</span></div>
+        <div class="result-row"><span>Profit</span><span>${l2Own.toFixed(2)}</span></div>
         <div class="result-row"><span>Referral</span><span>${l2Referral.toFixed(2)}</span></div>
         <div class="result-row"><span>Total</span><span>${l2Total.toFixed(2)}</span></div>
 
         <div class="section-title">Level 3</div>
         <div class="result-row"><span>Final Value</span><span>${l3Final.toFixed(2)}</span></div>
-        <div class="result-row"><span>Own Profit</span><span>${l3Own.toFixed(2)}</span></div>
+        <div class="result-row"><span>Profit</span><span>${l3Own.toFixed(2)}</span></div>
         <div class="result-row"><span>Referral</span><span>${l3Referral.toFixed(2)}</span></div>
         <div class="result-row"><span>Total</span><span>${l3Total.toFixed(2)}</span></div>
 
         <div class="total">Network Total: ${networkTotal.toFixed(2)}</div>
       `;
+
+      // cycle table
+      let tableHTML = `<h2>Cycle by Cycle</h2><table><tr>
+        <th>Cycle</th><th>Initiator</th><th>L1</th><th>L2</th><th>L3</th><th>Network</th></tr>`;
+      for (let i=1;i<=cycles;i++) {
+        const iniVal = compounded(initiator,i);
+        const l1Val = compounded(l1,i);
+        const l2Val = compounded(l2,i);
+        const l3Val = compounded(l3,i);
+
+        const iniOwn = iniVal - initiator;
+        const l1OwnCycle = l1Val - l1;
+        const l2OwnCycle = l2Val - l2;
+        const l3OwnCycle = l3Val - l3;
+
+        const iniRef = 0.2*l1OwnCycle + 0.1*l2OwnCycle + 0.05*l3OwnCycle;
+        const l1Ref = 0.2*l2OwnCycle + 0.1*l3OwnCycle;
+        const l2Ref = 0.2*l3OwnCycle;
+
+        const iniTotal = iniVal + iniRef;
+        const l1TotalCycle = l1Val + l1Ref;
+        const l2TotalCycle = l2Val + l2Ref;
+        const l3TotalCycle = l3Val;
+
+        const net = iniTotal + l1TotalCycle + l2TotalCycle + l3TotalCycle;
+
+        tableHTML += `<tr><td>${i}</td><td>${iniTotal.toFixed(2)}</td><td>${l1TotalCycle.toFixed(2)}</td><td>${l2TotalCycle.toFixed(2)}</td><td>${l3TotalCycle.toFixed(2)}</td><td>${net.toFixed(2)}</td></tr>`;
+      }
+      tableHTML += "</table>";
+      document.getElementById("cycleTable").innerHTML = tableHTML;
     }
 
-    document.querySelectorAll("input").forEach(input => {
-      input.addEventListener("input", calculate);
-    });
-
+    document.querySelectorAll("input").forEach(el => el.addEventListener("input", calculate));
     calculate();
   </script>
 </body>
