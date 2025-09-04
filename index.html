@@ -1,201 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>BitNest Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root {
-  --primary: #2563eb;
-  --accent: #06b6d4;
-  --bg: #f9fafb;
-  --text: #111827;
-  --text-light: #374151;
-  --border: #e5e7eb;
-}
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin:0; padding:16px; }
-.container { max-width: 1000px; margin:auto; }
-h1 { text-align:center; font-size:1.4rem; font-weight:600; margin-bottom:16px; color: var(--primary); }
-.form-grid { display:grid; gap:8px; margin-bottom:20px; }
-.form-row { display:flex; align-items:center; justify-content:space-between; }
-.form-row label { font-size:0.85rem; font-weight:500; color: var(--text-light); margin-right:8px; flex:1; }
-.form-row input { flex:1.2; padding:6px 8px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BitNest Calculator</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0d0d0d;
+      color: #eaeaea;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      text-align: center;
+      padding: 1rem;
+      background: #111;
+      border-bottom: 1px solid #222;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      color: #00ff88;
+    }
+    .container {
+      max-width: 950px;
+      margin: auto;
+      padding: 1rem;
+    }
 
-/* Tabs */
-.tabs { display:flex; border-bottom:2px solid var(--border); margin-bottom:12px; position:sticky; top:0; background:var(--bg); z-index:10; }
-.tab-btn { flex:1; padding:10px; text-align:center; font-size:0.9rem; font-weight:600; cursor:pointer; background:none; border:none; outline:none; }
-.tab-btn.active { border-bottom:3px solid var(--primary); color:var(--primary); }
+    /* Compact Inputs */
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1a1a1a;
+      padding: 0.5rem 0.8rem;
+      border-radius: 10px;
+      margin-bottom: 0.6rem;
+    }
+    .form-row label {
+      flex: 1;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #aaa;
+    }
+    .form-row input {
+      flex: 1;
+      max-width: 120px;
+      padding: 0.4rem;
+      border-radius: 8px;
+      border: none;
+      background: #0d0d0d;
+      color: #00ff88;
+      font-weight: bold;
+      text-align: center;
+    }
 
-/* Content */
-.tab-content { display:none; }
-.tab-content.active { display:block; }
+    /* Buttons */
+    .btn {
+      background: linear-gradient(90deg, #00ff88, #00ccff);
+      border: none;
+      border-radius: 20px;
+      color: #000;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 0.3rem;
+    }
+    .btn:hover { opacity: 0.85; }
 
-.results h2, .cycle h2 { font-size:1rem; font-weight:600; margin:12px 0 8px; color: var(--primary); }
-.section-title { font-size:0.8rem; font-weight:600; margin:10px 0 4px; color:var(--text-light); border-left:3px solid var(--accent); padding-left:6px; }
-.result-row { display:flex; justify-content:space-between; font-size:0.8rem; padding:2px 0; }
-.total { font-weight:600; font-size:0.9rem; text-align:center; margin-top:12px; color: var(--primary); }
+    /* Tabs */
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    .tabs button {
+      background: #1a1a1a;
+      color: #888;
+      border: none;
+      border-radius: 15px;
+      padding: 0.4rem 1rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .tabs button.active {
+      background: linear-gradient(90deg, #00ff88, #00ccff);
+      color: #000;
+      font-weight: 600;
+    }
 
-/* Table */
-table { width:100%; border-collapse:collapse; font-size:0.75rem; margin-top:10px; }
-th, td { border:1px solid var(--border); padding:4px; text-align:right; }
-th { background:#f3f4f6; color: var(--text-light); font-weight:600; }
-td:first-child, th:first-child { text-align:center; }
-tr:nth-child(even) { background:#f9fafb; }
-small { color:var(--text-light); font-size:0.7rem; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
 
-/* Column group colors */
-th.initiator, td.initiator { background:#e0f2fe; }
-th.l1, td.l1 { background:#dcfce7; }
-th.l2, td.l2 { background:#fef9c3; }
-th.l3, td.l3 { background:#fce7f3; }
+    /* Summary Cards */
+    .summary h2 {
+      color: #00ff88;
+      margin-bottom: 0.8rem;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .summary .level {
+      margin-bottom: 0.6rem;
+      padding: 0.7rem;
+      background: #1a1a1a;
+      border-radius: 10px;
+      font-size: 0.8rem;
+    }
+    .summary .total {
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #00ccff;
+      text-align: center;
+    }
 
-.download-btn { margin:8px 0; padding:6px 10px; font-size:0.8rem; background:var(--primary); color:white; border:none; border-radius:6px; cursor:pointer; }
-</style>
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.8rem;
+      font-size: 0.75rem;
+    }
+    table th, table td {
+      border: 1px solid #222;
+      padding: 0.4rem;
+      text-align: center;
+    }
+    table th {
+      background: #111;
+      color: #00ff88;
+    }
+    table td { background: #1a1a1a; }
+    small { color: #888; font-size: 0.7rem; }
+  </style>
 </head>
 <body>
-<div class="container">
-<h1>BitNest Calculator</h1>
+  <header>
+    <h1>BitNest Calculator</h1>
+  </header>
+  <div class="container">
+    <!-- Compact Form -->
+    <div class="form-row">
+      <label for="cycles">Cycles</label>
+      <input type="number" id="cycles" value="1" min="1">
+    </div>
+    <div class="form-row">
+      <label for="initiator">Initiator</label>
+      <input type="number" id="initiator" value="100" placeholder="0">
+    </div>
+    <div class="form-row">
+      <label for="l1">Level 1</label>
+      <input type="number" id="l1" placeholder="0">
+    </div>
+    <div class="form-row">
+      <label for="l2">Level 2</label>
+      <input type="number" id="l2" placeholder="0">
+    </div>
+    <div class="form-row">
+      <label for="l3">Level 3</label>
+      <input type="number" id="l3" placeholder="0">
+    </div>
 
-<div class="form-grid">
-  <div class="form-row"><label for="cycles">Cycles</label><input type="number" id="cycles" value="1" min="1"></div>
-  <div class="form-row"><label for="initiator">Initiator</label><input type="number" id="initiator" value="100" min="0"></div>
-  <div class="form-row"><label for="l1">Level 1</label><input type="number" id="l1" value="" min="0"></div>
-  <div class="form-row"><label for="l2">Level 2</label><input type="number" id="l2" value="" min="0"></div>
-  <div class="form-row"><label for="l3">Level 3</label><input type="number" id="l3" value="" min="0"></div>
-</div>
+    <div style="text-align:center; margin:0.8rem 0;">
+      <button class="btn" onclick="calculate()">Calculate</button>
+      <button class="btn" onclick="downloadCSV()">CSV</button>
+    </div>
 
-<div class="tabs">
-  <button class="tab-btn active" data-tab="summary">Summary</button>
-  <button class="tab-btn" data-tab="cycleDetails">Cycle Details</button>
-</div>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="active" onclick="switchTab(event,'summary')">Summary</button>
+      <button onclick="switchTab(event,'cycleDetails')">Cycle Details</button>
+    </div>
+    
+    <div id="summary" class="tab-content active summary"></div>
+    <div id="cycleDetails" class="tab-content"></div>
+  </div>
 
-<div id="summary" class="tab-content active"></div>
-<div id="cycleDetails" class="tab-content"></div>
+  <script>
+    const ROI_RATE = 0.24;
+    let lastCSV = [];
 
-<script>
-const ROI_RATE = 0.24;
+    function makeSummary(name, start, roi, ref, total){
+      const growth = start>0 ? ((total/start-1)*100).toFixed(1) : 0;
+      return `<div class="level"><strong>${name}</strong><br>
+        ROI: ${roi.toFixed(2)} | Ref: ${ref.toFixed(2)}<br>
+        Final: ${total.toFixed(2)} | Growth: ${growth}%</div>`;
+    }
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-  });
-});
+    function calculate(){
+      let cycles = Number(document.getElementById("cycles").value);
+      let initiator = Number(document.getElementById("initiator").value) || 0;
+      let l1 = Number(document.getElementById("l1").value) || 0;
+      let l2 = Number(document.getElementById("l2").value) || 0;
+      let l3 = Number(document.getElementById("l3").value) || 0;
 
-let csvRows = [];
+      const startIni = initiator, startL1 = l1, startL2 = l2, startL3 = l3;
+      let iniROI=0,iniRef=0,l1ROI=0,l1Ref=0,l2ROI=0,l2Ref=0,l3ROI=0,l3Ref=0;
+      let cycleRows="", csvRows=[["Cycle"]];
 
-function calculate() {
-  let cycles = Number(document.getElementById("cycles").value);
-  let initiator = Number(document.getElementById("initiator").value);
-  let l1 = Number(document.getElementById("l1").value);
-  let l2 = Number(document.getElementById("l2").value);
-  let l3 = Number(document.getElementById("l3").value);
+      if(startIni>0) csvRows[0].push("Ini Profit","Ini Ref","Ini Total","Ini %");
+      if(startL1>0) csvRows[0].push("L1 Profit","L1 Ref","L1 Total","L1 %");
+      if(startL2>0) csvRows[0].push("L2 Profit","L2 Ref","L2 Total","L2 %");
+      if(startL3>0) csvRows[0].push("L3 Profit","L3 Ref","L3 Total","L3 %");
+      csvRows[0].push("Network");
 
-  const startIni = initiator, startL1 = l1, startL2 = l2, startL3 = l3;
-  let iniROI = 0, iniRef = 0, l1ROI = 0, l1Ref = 0, l2ROI = 0, l2Ref = 0, l3ROI = 0, l3Ref = 0;
-  let cycleRowsHTML = "";
+      for(let i=1;i<=cycles;i++){
+        const iniProfit = initiator*ROI_RATE;
+        const l1Profit = l1*ROI_RATE;
+        const l2Profit = l2*ROI_RATE;
+        const l3Profit = l3*ROI_RATE;
 
-  csvRows = [["Cycle","Ini Profit","Ini Ref","Ini Total","L1 Profit","L1 Ref","L1 Total","L2 Profit","L2 Ref","L2 Total","L3 Profit","L3 Ref","L3 Total","Network"]];
+        const iniRefEarn = 0.2*l1Profit+0.1*l2Profit+0.05*l3Profit;
+        const l1RefEarn = 0.2*l2Profit+0.1*l3Profit;
+        const l2RefEarn = 0.2*l3Profit;
+        const l3RefEarn = 0;
 
-  for(let i = 1; i <= cycles; i++){
-    const iniProfit = initiator * ROI_RATE;
-    const l1Profit = l1 * ROI_RATE;
-    const l2Profit = l2 * ROI_RATE;
-    const l3Profit = l3 * ROI_RATE;
+        iniROI+=iniProfit; iniRef+=iniRefEarn;
+        l1ROI+=l1Profit; l1Ref+=l1RefEarn;
+        l2ROI+=l2Profit; l2Ref+=l2RefEarn;
+        l3ROI+=l3Profit; l3Ref+=l3RefEarn;
 
-    const iniRefEarn = 0.2*l1Profit + 0.1*l2Profit + 0.05*l3Profit;
-    const l1RefEarn = 0.2*l2Profit + 0.1*l3Profit;
-    const l2RefEarn = 0.2*l3Profit;
-    const l3RefEarn = 0;
+        initiator+=iniProfit+iniRefEarn;
+        l1+=l1Profit+l1RefEarn;
+        l2+=l2Profit+l2RefEarn;
+        l3+=l3Profit+l3RefEarn;
 
-    iniROI += iniProfit; iniRef += iniRefEarn;
-    l1ROI += l1Profit; l1Ref += l1RefEarn;
-    l2ROI += l2Profit; l2Ref += l2RefEarn;
-    l3ROI += l3Profit; l3Ref += l3RefEarn;
+        const net=initiator+l1+l2+l3;
+        cycleRows += `<tr><td>${i}</td>`;
+        let row=[i];
 
-    initiator += iniProfit + iniRefEarn;
-    l1 += l1Profit + l1RefEarn;
-    l2 += l2Profit + l2RefEarn;
-    l3 += l3Profit + l3RefEarn;
+        if(startIni>0){
+          let growth=((initiator/startIni-1)*100).toFixed(1);
+          cycleRows+=`<td>${iniProfit.toFixed(2)}+${iniRefEarn.toFixed(2)}</td><td>${initiator.toFixed(2)}</td><td>${growth}%</td>`;
+          row.push(iniProfit.toFixed(2),iniRefEarn.toFixed(2),initiator.toFixed(2),growth+"%");
+        }
+        if(startL1>0){
+          let growth=((l1/startL1-1)*100).toFixed(1);
+          cycleRows+=`<td>${l1Profit.toFixed(2)}+${l1RefEarn.toFixed(2)}</td><td>${l1.toFixed(2)}</td><td>${growth}%</td>`;
+          row.push(l1Profit.toFixed(2),l1RefEarn.toFixed(2),l1.toFixed(2),growth+"%");
+        }
+        if(startL2>0){
+          let growth=((l2/startL2-1)*100).toFixed(1);
+          cycleRows+=`<td>${l2Profit.toFixed(2)}+${l2RefEarn.toFixed(2)}</td><td>${l2.toFixed(2)}</td><td>${growth}%</td>`;
+          row.push(l2Profit.toFixed(2),l2RefEarn.toFixed(2),l2.toFixed(2),growth+"%");
+        }
+        if(startL3>0){
+          let growth=((l3/startL3-1)*100).toFixed(1);
+          cycleRows+=`<td>${l3Profit.toFixed(2)}+${l3RefEarn.toFixed(2)}</td><td>${l3.toFixed(2)}</td><td>${growth}%</td>`;
+          row.push(l3Profit.toFixed(2),l3RefEarn.toFixed(2),l3.toFixed(2),growth+"%");
+        }
 
-    const net = initiator + l1 + l2 + l3;
-    const iniPct = startIni>0 ? ((initiator/startIni-1)*100) : 0;
-    const l1Pct = startL1>0 ? ((l1/startL1-1)*100) : 0;
-    const l2Pct = startL2>0 ? ((l2/startL2-1)*100) : 0;
-    const l3Pct = startL3>0 ? ((l3/startL3-1)*100) : 0;
+        cycleRows+=`<td>${net.toFixed(2)}</td></tr>`;
+        row.push(net.toFixed(2));
+        csvRows.push(row);
+      }
 
-    cycleRowsHTML += `<tr>
-      <td>${i}</td>
-      ${startIni>0 ? `<td class="initiator">${iniProfit.toFixed(2)}<br><small>+${iniRefEarn.toFixed(2)}</small></td><td class="initiator">${initiator.toFixed(2)}<br><small>${iniPct.toFixed(1)}%</small></td>` : ""}
-      ${startL1>0 ? `<td class="l1">${l1Profit.toFixed(2)}<br><small>+${l1RefEarn.toFixed(2)}</small></td><td class="l1">${l1.toFixed(2)}<br><small>${l1Pct.toFixed(1)}%</small></td>` : ""}
-      ${startL2>0 ? `<td class="l2">${l2Profit.toFixed(2)}<br><small>+${l2RefEarn.toFixed(2)}</small></td><td class="l2">${l2.toFixed(2)}<br><small>${l2Pct.toFixed(1)}%</small></td>` : ""}
-      ${startL3>0 ? `<td class="l3">${l3Profit.toFixed(2)}<br><small>+${l3RefEarn.toFixed(2)}</small></td><td class="l3">${l3.toFixed(2)}<br><small>${l3Pct.toFixed(1)}%</small></td>` : ""}
-      <td>${net.toFixed(2)}</td>
-    </tr>`;
+      let summaryHTML=`<h2>Summary after ${cycles} cycles</h2>`;
+      if(startIni>0) summaryHTML+=makeSummary("Initiator",startIni,iniROI,iniRef,initiator);
+      if(startL1>0) summaryHTML+=makeSummary("Level 1",startL1,l1ROI,l1Ref,l1);
+      if(startL2>0) summaryHTML+=makeSummary("Level 2",startL2,l2ROI,l2Ref,l2);
+      if(startL3>0) summaryHTML+=makeSummary("Level 3",startL3,l3ROI,l3Ref,l3);
+      summaryHTML+=`<div class="total">Network Total: ${(initiator+l1+l2+l3).toFixed(2)}</div>`;
+      document.getElementById("summary").innerHTML=summaryHTML;
 
-    csvRows.push([
-      i,
-      startIni>0 ? iniProfit.toFixed(2) : "",
-      startIni>0 ? iniRefEarn.toFixed(2) : "",
-      startIni>0 ? initiator.toFixed(2) : "",
-      startL1>0 ? l1Profit.toFixed(2) : "",
-      startL1>0 ? l1RefEarn.toFixed(2) : "",
-      startL1>0 ? l1.toFixed(2) : "",
-      startL2>0 ? l2Profit.toFixed(2) : "",
-      startL2>0 ? l2RefEarn.toFixed(2) : "",
-      startL2>0 ? l2.toFixed(2) : "",
-      startL3>0 ? l3Profit.toFixed(2) : "",
-      startL3>0 ? l3RefEarn.toFixed(2) : "",
-      startL3>0 ? l3.toFixed(2) : "",
-      net.toFixed(2)
-    ]);
-  }
+      let header="<tr><th>Cycle</th>";
+      if(startIni>0) header+="<th>Ini (P+R)</th><th>Total</th><th>%</th>";
+      if(startL1>0) header+="<th>L1 (P+R)</th><th>Total</th><th>%</th>";
+      if(startL2>0) header+="<th>L2 (P+R)</th><th>Total</th><th>%</th>";
+      if(startL3>0) header+="<th>L3 (P+R)</th><th>Total</th><th>%</th>";
+      header+="<th>Network</th></tr>";
 
-  // Summary
-  let summaryHTML = `<h2></h2>`;
-  if(startIni>0) summaryHTML += makeSummary("Initiator", startIni, iniROI, iniRef, initiator);
-  if(startL1>0) summaryHTML += makeSummary("Level 1", startL1, l1ROI, l1Ref, l1);
-  if(startL2>0) summaryHTML += makeSummary("Level 2", startL2, l2ROI, l2Ref, l2);
-  if(startL3>0) summaryHTML += makeSummary("Level 3", startL3, l3ROI, l3Ref, l3);
-  summaryHTML += `<div class="total">Network Total: ${(initiator+l1+l2+l3).toFixed(2)}</div>`;
-  document.getElementById("summary").innerHTML = summaryHTML;
+      document.getElementById("cycleDetails").innerHTML=
+        `<div style="overflow-x:auto"><table><thead>${header}</thead><tbody>${cycleRows}</tbody></table></div>`;
 
-  // Table headers
-  let headerHTML = `<tr>
-    <th rowspan="2">Cycle</th>
-    ${startIni>0 ? `<th class="initiator" colspan="2">Initiator</th>` : ""}
-    ${startL1>0 ? `<th class="l1" colspan="2">Level 1</th>` : ""}
-    ${startL2>0 ? `<th class="l2" colspan="2">Level 2</th>` : ""}
-    ${startL3>0 ? `<th class="l3" colspan="2">Level 3</th>` : ""}
-    <th rowspan="2">Network</th>
-  </tr>
-  <tr>
-    ${startIni>0 ? `<th class="initiator">Profit+Ref</th><th class="initiator">Total</th>` : ""}
-    ${startL1>0 ? `<th class="l1">Profit+Ref</th><th class="l1">Total</th>` : ""}
-    ${startL2>0 ? `<th class="l2">Profit+Ref</th><th class="l2">Total</th>` : ""}
-    ${startL3>0 ? `<th class="l3">Profit+Ref</th><th class="l3">Total</th>` : ""}`;
+      lastCSV = csvRows;
+    }
 
-  document.getElementById("cycleDetails").innerHTML = `<div style="overflow-x:auto"><table><thead>${headerHTML}</thead><tbody>${cycleRowsHTML}</tbody></table></div>`;
-}
+    function switchTab(evt,id){
+      document.querySelectorAll(".tab-content").forEach(div=>div.classList.remove("active"));
+      document.querySelectorAll(".tabs button").forEach(btn=>btn.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      evt.target.classList.add("active");
+    }
 
-function makeSummary(title,start,roi,ref,final){
-  const growthPct=start>0?((final/start-1)*100).toFixed(1):"0";
-  return `<div class="section-title">${title}</div>
-    <div class="result-row"><span>Initial Investment</span><span>${start.toFixed(2)}</span></div>
-    <div class="result-row"><span>ROI Earned</span><span>${roi.toFixed(2)}</span></div>
-    <div class="result-row"><span>Referral Earned</span><span>${ref.toFixed(2)}</span></div>
-    <div class="result-row"><span>Total Earnings</span><span>${(roi+ref).toFixed(2)}</span></div>
-    <div class="result-row"><span>Final Balance</span><span>${final.toFixed(2)}</span></div>
-    <div class="result-row"><span>Growth %</span><span>${growthPct}%</span></div>`;
-}
-
-// Auto-calculate on input change
-document.querySelectorAll('input').forEach(input => input.addEventListener('input', calculate));
-calculate();
-</script>
-</div>
+    function downloadCSV(){
+      if(!lastCSV.length){ alert("Please calculate first!"); return; }
+      let csv=lastCSV.map(r=>r.join(",")).join("\n");
+      let blob=new Blob([csv],{type:"text/csv"});
+      let url=URL.createObjectURL(blob);
+      let a=document.createElement("a");
+      a.href=url; a.download="bitnest_calculator.csv";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    }
+  </script>
 </body>
 </html>
