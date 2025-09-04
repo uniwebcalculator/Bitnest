@@ -14,60 +14,56 @@
     }
     header {
       text-align: center;
-      padding: 1rem;
+      padding: 0.5rem;
       background: #111;
       border-bottom: 1px solid #222;
     }
     header h1 {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       color: #00ff88;
+      margin: 0;
     }
     .container {
-      max-width: 950px;
+      max-width: 900px;
       margin: auto;
       padding: 1rem;
+      font-size: 0.85rem;
     }
 
-    /* Compact Inputs */
+    /* Input rows */
     .form-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      background: #1a1a1a;
-      padding: 0.5rem 0.8rem;
-      border-radius: 10px;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
     }
     .form-row label {
-      flex: 1;
-      font-size: 0.85rem;
-      font-weight: 600;
+      min-width: 80px;
+      font-size: 0.8rem;
       color: #aaa;
     }
     .form-row input {
       flex: 1;
-      max-width: 120px;
-      padding: 0.4rem;
-      border-radius: 8px;
-      border: none;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid #333;
+      border-radius: 6px;
       background: #0d0d0d;
       color: #00ff88;
-      font-weight: bold;
-      text-align: center;
+      text-align: left;
+      font-size: 0.8rem;
     }
 
     /* Buttons */
     .btn {
       background: linear-gradient(90deg, #00ff88, #00ccff);
       border: none;
-      border-radius: 20px;
+      border-radius: 15px;
       color: #000;
-      padding: 0.5rem 1rem;
-      font-size: 0.85rem;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
       font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
-      margin: 0.3rem;
+      margin: 0.2rem;
     }
     .btn:hover { opacity: 0.85; }
 
@@ -75,16 +71,16 @@
     .tabs {
       display: flex;
       justify-content: center;
-      gap: 0.5rem;
-      margin: 1rem 0;
+      gap: 0.3rem;
+      margin: 0.6rem 0;
     }
     .tabs button {
       background: #1a1a1a;
       color: #888;
       border: none;
-      border-radius: 15px;
-      padding: 0.4rem 1rem;
-      font-size: 0.8rem;
+      border-radius: 10px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.75rem;
       cursor: pointer;
     }
     .tabs button.active {
@@ -96,23 +92,24 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Summary Cards */
+    /* Summary */
     .summary h2 {
       color: #00ff88;
-      margin-bottom: 0.8rem;
-      font-size: 1rem;
+      margin: 0.6rem 0;
+      font-size: 0.9rem;
       text-align: center;
     }
     .summary .level {
-      margin-bottom: 0.6rem;
-      padding: 0.7rem;
-      background: #1a1a1a;
-      border-radius: 10px;
+      margin-bottom: 0.8rem;
       font-size: 0.8rem;
+      line-height: 1.2rem;
+    }
+    .summary .level strong {
+      color: #00ccff;
     }
     .summary .total {
       margin-top: 0.8rem;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: bold;
       color: #00ccff;
       text-align: center;
@@ -122,20 +119,19 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 0.8rem;
+      margin-top: 0.5rem;
       font-size: 0.75rem;
     }
     table th, table td {
       border: 1px solid #222;
-      padding: 0.4rem;
+      padding: 0.3rem;
       text-align: center;
     }
     table th {
       background: #111;
       color: #00ff88;
     }
-    table td { background: #1a1a1a; }
-    small { color: #888; font-size: 0.7rem; }
+    table td { background: #0d0d0d; }
   </style>
 </head>
 <body>
@@ -143,7 +139,7 @@
     <h1>BitNest Calculator</h1>
   </header>
   <div class="container">
-    <!-- Compact Form -->
+    <!-- Inputs -->
     <div class="form-row">
       <label for="cycles">Cycles</label>
       <input type="number" id="cycles" value="1" min="1">
@@ -165,7 +161,7 @@
       <input type="number" id="l3" placeholder="0">
     </div>
 
-    <div style="text-align:center; margin:0.8rem 0;">
+    <div style="text-align:center; margin:0.5rem 0;">
       <button class="btn" onclick="calculate()">Calculate</button>
       <button class="btn" onclick="downloadCSV()">CSV</button>
     </div>
@@ -187,8 +183,11 @@
     function makeSummary(name, start, roi, ref, total){
       const growth = start>0 ? ((total/start-1)*100).toFixed(1) : 0;
       return `<div class="level"><strong>${name}</strong><br>
-        ROI: ${roi.toFixed(2)} | Ref: ${ref.toFixed(2)}<br>
-        Final: ${total.toFixed(2)} | Growth: ${growth}%</div>`;
+        Initial: ${start.toFixed(2)}<br>
+        ROI: ${roi.toFixed(2)}<br>
+        Referral: ${ref.toFixed(2)}<br>
+        Final: ${total.toFixed(2)}<br>
+        Growth: ${growth}%</div>`;
     }
 
     function calculate(){
