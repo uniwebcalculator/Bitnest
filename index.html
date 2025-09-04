@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BitNest Calculator</title>
+<title>Earning Calculator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -60,9 +60,9 @@ th.l3, td.l3 { background:#fce7f3; }
 <div class="form-grid">
   <div class="form-row"><label for="cycles">Cycles</label><input type="number" id="cycles" value="1" min="1"></div>
   <div class="form-row"><label for="initiator">Initiator</label><input type="number" id="initiator" value="100" min="0"></div>
-  <div class="form-row"><label for="l1">Level 1</label><input type="number" id="l1" value="" min="0"></div>
-  <div class="form-row"><label for="l2">Level 2</label><input type="number" id="l2" value="" min="0"></div>
-  <div class="form-row"><label for="l3">Level 3</label><input type="number" id="l3" value="" min="0"></div>
+  <div class="form-row"><label for="l1">Level 1</label><input type="number" id="l1" value="50" min="0"></div>
+  <div class="form-row"><label for="l2">Level 2</label><input type="number" id="l2" value="25" min="0"></div>
+  <div class="form-row"><label for="l3">Level 3</label><input type="number" id="l3" value="10" min="0"></div>
 </div>
 
 <div class="tabs">
@@ -72,113 +72,112 @@ th.l3, td.l3 { background:#fce7f3; }
 
 <div id="summary" class="tab-content active"></div>
 <div id="cycleDetails" class="tab-content"></div>
+</div>
 
 <script>
-const ROI_RATE = 0.24;
+const ROI_RATE=0.24;
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
   });
 });
 
-let csvRows = [];
+function calculate(){
+  let cycles=Number(document.getElementById("cycles").value);
+  let initiator=Number(document.getElementById("initiator").value);
+  let l1=Number(document.getElementById("l1").value);
+  let l2=Number(document.getElementById("l2").value);
+  let l3=Number(document.getElementById("l3").value);
 
-function calculate() {
-  let cycles = Number(document.getElementById("cycles").value);
-  let initiator = Number(document.getElementById("initiator").value);
-  let l1 = Number(document.getElementById("l1").value);
-  let l2 = Number(document.getElementById("l2").value);
-  let l3 = Number(document.getElementById("l3").value);
+  const startIni=initiator, startL1=l1, startL2=l2, startL3=l3;
+  let iniROI=0, iniRef=0, l1ROI=0, l1Ref=0, l2ROI=0, l2Ref=0, l3ROI=0, l3Ref=0;
+  let cycleRows="", csvRows=[["Cycle","Ini Profit","Ini Ref","Ini Total","L1 Profit","L1 Ref","L1 Total","L2 Profit","L2 Ref","L2 Total","L3 Profit","L3 Ref","L3 Total","Network"]];
 
-  const startIni = initiator, startL1 = l1, startL2 = l2, startL3 = l3;
-  let iniROI = 0, iniRef = 0, l1ROI = 0, l1Ref = 0, l2ROI = 0, l2Ref = 0, l3ROI = 0, l3Ref = 0;
-  let cycleRowsHTML = "";
+  for(let i=1;i<=cycles;i++){
+    const iniProfit=initiator*ROI_RATE;
+    const l1Profit=l1*ROI_RATE;
+    const l2Profit=l2*ROI_RATE;
+    const l3Profit=l3*ROI_RATE;
 
-  csvRows = [["Cycle","Ini Profit","Ini Ref","Ini Total","L1 Profit","L1 Ref","L1 Total","L2 Profit","L2 Ref","L2 Total","L3 Profit","L3 Ref","L3 Total","Network"]];
+    const iniRefEarn=0.2*l1Profit+0.1*l2Profit+0.05*l3Profit;
+    const l1RefEarn=0.2*l2Profit+0.1*l3Profit;
+    const l2RefEarn=0.2*l3Profit;
+    const l3RefEarn=0;
 
-  for(let i = 1; i <= cycles; i++){
-    const iniProfit = initiator * ROI_RATE;
-    const l1Profit = l1 * ROI_RATE;
-    const l2Profit = l2 * ROI_RATE;
-    const l3Profit = l3 * ROI_RATE;
+    iniROI+=iniProfit; iniRef+=iniRefEarn;
+    l1ROI+=l1Profit; l1Ref+=l1RefEarn;
+    l2ROI+=l2Profit; l2Ref+=l2RefEarn;
+    l3ROI+=l3Profit; l3Ref+=l3RefEarn;
 
-    const iniRefEarn = 0.2*l1Profit + 0.1*l2Profit + 0.05*l3Profit;
-    const l1RefEarn = 0.2*l2Profit + 0.1*l3Profit;
-    const l2RefEarn = 0.2*l3Profit;
-    const l3RefEarn = 0;
+    initiator+=iniProfit+iniRefEarn;
+    l1+=l1Profit+l1RefEarn;
+    l2+=l2Profit+l2RefEarn;
+    l3+=l3Profit+l3RefEarn;
 
-    iniROI += iniProfit; iniRef += iniRefEarn;
-    l1ROI += l1Profit; l1Ref += l1RefEarn;
-    l2ROI += l2Profit; l2Ref += l2RefEarn;
-    l3ROI += l3Profit; l3Ref += l3RefEarn;
+    const net=initiator+l1+l2+l3;
+    const iniPct=startIni>0?((initiator/startIni-1)*100):0;
+    const l1Pct=startL1>0?((l1/startL1-1)*100):0;
+    const l2Pct=startL2>0?((l2/startL2-1)*100):0;
+    const l3Pct=startL3>0?((l3/startL3-1)*100):0;
 
-    initiator += iniProfit + iniRefEarn;
-    l1 += l1Profit + l1RefEarn;
-    l2 += l2Profit + l2RefEarn;
-    l3 += l3Profit + l3RefEarn;
+    cycleRows+=`
+      <tr>
+        <td>${i}</td>
+        <td class="initiator">${iniProfit.toFixed(2)}<br><small>+${iniRefEarn.toFixed(2)}</small></td>
+        <td class="initiator">${initiator.toFixed(2)}<br><small>${iniPct.toFixed(1)}%</small></td>
+        <td class="l1">${l1Profit.toFixed(2)}<br><small>+${l1RefEarn.toFixed(2)}</small></td>
+        <td class="l1">${l1.toFixed(2)}<br><small>${l1Pct.toFixed(1)}%</small></td>
+        <td class="l2">${l2Profit.toFixed(2)}<br><small>+${l2RefEarn.toFixed(2)}</small></td>
+        <td class="l2">${l2.toFixed(2)}<br><small>${l2Pct.toFixed(1)}%</small></td>
+        <td class="l3">${l3Profit.toFixed(2)}<br><small>+${l3RefEarn.toFixed(2)}</small></td>
+        <td class="l3">${l3.toFixed(2)}<br><small>${l3Pct.toFixed(1)}%</small></td>
+        <td>${net.toFixed(2)}</td>
+      </tr>`;
 
-    const net = initiator + l1 + l2 + l3;
-    const iniPct = startIni>0 ? ((initiator/startIni-1)*100) : 0;
-    const l1Pct = startL1>0 ? ((l1/startL1-1)*100) : 0;
-    const l2Pct = startL2>0 ? ((l2/startL2-1)*100) : 0;
-    const l3Pct = startL3>0 ? ((l3/startL3-1)*100) : 0;
-
-    cycleRowsHTML += `<tr>
-      <td>${i}</td>
-      ${startIni>0 ? `<td class="initiator">${iniProfit.toFixed(2)}<br><small>+${iniRefEarn.toFixed(2)}</small></td><td class="initiator">${initiator.toFixed(2)}<br><small>${iniPct.toFixed(1)}%</small></td>` : ""}
-      ${startL1>0 ? `<td class="l1">${l1Profit.toFixed(2)}<br><small>+${l1RefEarn.toFixed(2)}</small></td><td class="l1">${l1.toFixed(2)}<br><small>${l1Pct.toFixed(1)}%</small></td>` : ""}
-      ${startL2>0 ? `<td class="l2">${l2Profit.toFixed(2)}<br><small>+${l2RefEarn.toFixed(2)}</small></td><td class="l2">${l2.toFixed(2)}<br><small>${l2Pct.toFixed(1)}%</small></td>` : ""}
-      ${startL3>0 ? `<td class="l3">${l3Profit.toFixed(2)}<br><small>+${l3RefEarn.toFixed(2)}</small></td><td class="l3">${l3.toFixed(2)}<br><small>${l3Pct.toFixed(1)}%</small></td>` : ""}
-      <td>${net.toFixed(2)}</td>
-    </tr>`;
-
-    csvRows.push([
-      i,
-      startIni>0 ? iniProfit.toFixed(2) : "",
-      startIni>0 ? iniRefEarn.toFixed(2) : "",
-      startIni>0 ? initiator.toFixed(2) : "",
-      startL1>0 ? l1Profit.toFixed(2) : "",
-      startL1>0 ? l1RefEarn.toFixed(2) : "",
-      startL1>0 ? l1.toFixed(2) : "",
-      startL2>0 ? l2Profit.toFixed(2) : "",
-      startL2>0 ? l2RefEarn.toFixed(2) : "",
-      startL2>0 ? l2.toFixed(2) : "",
-      startL3>0 ? l3Profit.toFixed(2) : "",
-      startL3>0 ? l3RefEarn.toFixed(2) : "",
-      startL3>0 ? l3.toFixed(2) : "",
-      net.toFixed(2)
-    ]);
+    csvRows.push([i,iniProfit.toFixed(2),iniRefEarn.toFixed(2),initiator.toFixed(2),
+      l1Profit.toFixed(2),l1RefEarn.toFixed(2),l1.toFixed(2),
+      l2Profit.toFixed(2),l2RefEarn.toFixed(2),l2.toFixed(2),
+      l3Profit.toFixed(2),l3RefEarn.toFixed(2),l3.toFixed(2),
+      net.toFixed(2)]);
   }
 
-  // Summary
-  let summaryHTML = `<h2>Summary after ${cycles} cycles</h2>`;
-  if(startIni>0) summaryHTML += makeSummary("Initiator", startIni, iniROI, iniRef, initiator);
-  if(startL1>0) summaryHTML += makeSummary("Level 1", startL1, l1ROI, l1Ref, l1);
-  if(startL2>0) summaryHTML += makeSummary("Level 2", startL2, l2ROI, l2Ref, l2);
-  if(startL3>0) summaryHTML += makeSummary("Level 3", startL3, l3ROI, l3Ref, l3);
-  summaryHTML += `<div class="total">Network Total: ${(initiator+l1+l2+l3).toFixed(2)}</div>`;
-  document.getElementById("summary").innerHTML = summaryHTML;
+  document.getElementById("summary").innerHTML=`
+    <h2>Summary after ${cycles} cycles</h2>
+    ${makeSummary("Initiator",startIni,iniROI,iniRef,initiator)}
+    ${makeSummary("Level 1",startL1,l1ROI,l1Ref,l1)}
+    ${makeSummary("Level 2",startL2,l2ROI,l2Ref,l2)}
+    ${makeSummary("Level 3",startL3,l3ROI,l3Ref,l3)}
+    <div class="total">Network Total: ${(initiator+l1+l2+l3).toFixed(2)}</div>
+  `;
 
-  // Table headers
-  let headerHTML = `<tr>
-    <th rowspan="2">Cycle</th>
-    ${startIni>0 ? `<th class="initiator" colspan="2">Initiator</th>` : ""}
-    ${startL1>0 ? `<th class="l1" colspan="2">Level 1</th>` : ""}
-    ${startL2>0 ? `<th class="l2" colspan="2">Level 2</th>` : ""}
-    ${startL3>0 ? `<th class="l3" colspan="2">Level 3</th>` : ""}
-    <th rowspan="2">Network</th>
-  </tr>
-  <tr>
-    ${startIni>0 ? `<th class="initiator">Profit+Ref</th><th class="initiator">Total</th>` : ""}
-    ${startL1>0 ? `<th class="l1">Profit+Ref</th><th class="l1">Total</th>` : ""}
-    ${startL2>0 ? `<th class="l2">Profit+Ref</th><th class="l2">Total</th>` : ""}
-    ${startL3>0 ? `<th class="l3">Profit+Ref</th><th class="l3">Total</th>` : ""}`;
-
-  document.getElementById("cycleDetails").innerHTML = `<div style="overflow-x:auto"><table><thead>${headerHTML}</thead><tbody>${cycleRowsHTML}</tbody></table></div>`;
+  document.getElementById("cycleDetails").innerHTML=`
+    <h2>Cycle by Cycle</h2>
+    <button class="download-btn" onclick='downloadCSV(${JSON.stringify(csvRows)})'>Download CSV</button>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th rowspan="2">Cycle</th>
+            <th class="initiator" colspan="2">Initiator</th>
+            <th class="l1" colspan="2">Level 1</th>
+            <th class="l2" colspan="2">Level 2</th>
+            <th class="l3" colspan="2">Level 3</th>
+            <th rowspan="2">Network</th>
+          </tr>
+          <tr>
+            <th class="initiator">Profit+Ref</th><th class="initiator">Total</th>
+            <th class="l1">Profit+Ref</th><th class="l1">Total</th>
+            <th class="l2">Profit+Ref</th><th class="l2">Total</th>
+            <th class="l3">Profit+Ref</th><th class="l3">Total</th>
+          </tr>
+        </thead>
+        <tbody>${cycleRows}</tbody>
+      </table>
+    </div>`;
 }
 
 function makeSummary(title,start,roi,ref,final){
@@ -192,10 +191,22 @@ function makeSummary(title,start,roi,ref,final){
     <div class="result-row"><span>Growth %</span><span>${growthPct}%</span></div>`;
 }
 
+function downloadCSV(rows){
+  let csvContent=rows.map(e=>e.join(",")).join("\n");
+  const blob=new Blob([csvContent],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.setAttribute("href",url);
+  link.setAttribute("download","earnings.csv");
+  link.style.display="none";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 // Auto-calculate on input change
-document.querySelectorAll('input').forEach(input => input.addEventListener('input', calculate));
+document.querySelectorAll('input').forEach(input=>input.addEventListener('input', calculate));
 calculate();
 </script>
-</div>
 </body>
 </html>
